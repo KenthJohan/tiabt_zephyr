@@ -28,7 +28,6 @@ https://github.com/zephyrproject-rtos/zephyr/blob/main/samples/drivers/counter/a
 #include "egadc.h"
 #include "dpot.h"
 #include "bt.h"
-#include "srv2.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_APP_LOG_LEVEL);
@@ -261,10 +260,10 @@ int main(void)
 	}
 	
 	mybt_init();
+	
 
 	while(1) {
 		mybt_progress();
-		srv2_update();
 		k_sleep(K_SECONDS(1));
 	}
 
