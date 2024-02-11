@@ -1,6 +1,7 @@
 #include "srv2.h"
 #include "mydefs.h"
 #include "gatt_cpf.h"
+#include "myuuids.h"
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
@@ -19,19 +20,7 @@ int simulate_temp = 0;
 static void ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value);
 
 
-#define MY_UUID(x) BT_UUID_INIT_128(BT_UUID_128_ENCODE(MYGATTW32_SRV2, UINT16_C(x), 0x4B9C, 0x9C69, 0x4975713E0FF2))
 
-static const struct bt_uuid_128 uuids[] = {
-	[MYGATT_SRV2] = MY_UUID(MYGATT_SRV2),
-	[MYGATT_SRV2_CH0_CHRC0] = MY_UUID(MYGATT_SRV2_CH0_CHRC0),
-	[MYGATT_SRV2_CH1_CHRC0] = MY_UUID(MYGATT_SRV2_CH1_CHRC0),
-	[MYGATT_SRV2_CH2_CHRC0] = MY_UUID(MYGATT_SRV2_CH2_CHRC0),
-	[MYGATT_SRV2_CH3_CHRC0] = MY_UUID(MYGATT_SRV2_CH3_CHRC0),
-	[MYGATT_SRV2_CH4_CHRC0] = MY_UUID(MYGATT_SRV2_CH4_CHRC0),
-	[MYGATT_SRV2_CH5_CHRC0] = MY_UUID(MYGATT_SRV2_CH5_CHRC0),
-	[MYGATT_SRV2_CH6_CHRC0] = MY_UUID(MYGATT_SRV2_CH6_CHRC0),
-	[MYGATT_SRV2_CH7_CHRC0] = MY_UUID(MYGATT_SRV2_CH7_CHRC0),
-};
 
 BT_GATT_SERVICE_DEFINE(service2,
 	BT_GATT_PRIMARY_SERVICE(&uuids[MYGATT_SRV2]),

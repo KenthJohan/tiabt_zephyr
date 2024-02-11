@@ -1,6 +1,7 @@
 #include "srv3.h"
 #include "mydefs.h"
 #include "gatt_cpf.h"
+#include "myuuids.h"
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
@@ -15,10 +16,7 @@ LOG_MODULE_REGISTER(srv3, CONFIG_APP_LOG_LEVEL);
 
 #define MY_UUID(x) BT_UUID_INIT_128(BT_UUID_128_ENCODE(MYGATTW32_SRV3, UINT16_C(x), 0x4B9C, 0x9C69, 0x4975713E0FF2))
 
-static const struct bt_uuid_128 uuids[] = {
-	[MYGATT_SRV3] = MY_UUID(MYGATT_SRV3),
-	[MYGATT_SRV3_DPOT0_CHRC0] = MY_UUID(MYGATT_SRV3_DPOT0_CHRC0),
-};
+
 
 
 static ssize_t read_signed(struct bt_conn *conn, const struct bt_gatt_attr *attr,void *buf, uint16_t len, uint16_t offset)
