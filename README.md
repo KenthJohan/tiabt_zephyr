@@ -86,3 +86,20 @@ To execute Twister integration tests, run the following command:
 ```shell
 west twister -T tests --integration
 ```
+
+
+# More
+
+https://docs.zephyrproject.org/latest/develop/getting_started/index.html
+https://github.com/tio/tio
+
+```bash
+sudo tio -b 115200 -d 8 -f none -s 1 -p none /dev/ttyUSB0
+```
+```bash
+sudo tio /dev/ttyACM0
+```
+```bash
+source ~/zephyrproject/.venv/bin/activate
+```
+
