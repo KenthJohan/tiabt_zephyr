@@ -37,21 +37,16 @@ static ssize_t write_signed(struct bt_conn *conn, const struct bt_gatt_attr *att
 }
 
 
-static void ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value);
+//static void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value){}
+
 BT_GATT_SERVICE_DEFINE(service3,
 	BT_GATT_PRIMARY_SERVICE(&uuids[MYGATT_SRV3]),
 	//BT_GATT_CHARACTERISTIC(&led_char_uuid, BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY, BT_GATT_PERM_READ, read_u16, NULL, &values.voltage[0]),
 	BT_GATT_CHARACTERISTIC(&uuids[MYGATT_SRV3_DPOT0_CHRC0], BT_GATT_CHRC_WRITE | BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE, read_signed, write_signed, &values.voltage[MYID_DPOT0_WIPER]),
-	BT_GATT_CCC(ccc_cfg_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+	BT_GATT_CCC(ccc_cfg_changed1, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 	BT_GATT_CUD("DPOT0", BT_GATT_PERM_READ),
 	BT_GATT_CPF(&cha_format_value),
 );
-
-static void ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
-{
-    printk("DPOT CCC %i\n", (value == BT_GATT_CCC_NOTIFY));
-}
-
 
 
                    

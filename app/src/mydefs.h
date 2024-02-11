@@ -4,7 +4,7 @@
 #define MYGATTW32_SRV2 0x2A5A20B9
 #define MYGATTW32_SRV3 0x2A5A20BA
 
-typedef enum mygatt_srv2_t {
+typedef enum {
 	MYGATT_SRV2,
 	MYGATT_SRV2_CH0_CHRC0,
 	MYGATT_SRV2_CH0_CHRC1,
@@ -55,11 +55,11 @@ typedef enum mygatt_srv2_t {
 	MYGATT_SRV3_DPOT0_CPF,
 
 	MYGATT_COUNT
-};
+} mygatt_t;
 
 
 
-typedef enum myid_t {
+typedef enum {
 	MYID_ADC_VREF,
 	MYID_ADC_TEMP,
 	MYID_ADC_CH0,
@@ -80,7 +80,7 @@ typedef enum myid_t {
 	MYID_DPOT6_WIPER,
 
 	MYID_COUNT
-};
+} myid_t;
 
 typedef struct {
 	int32_t voltage[MYID_COUNT];
