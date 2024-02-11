@@ -59,21 +59,6 @@ void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value)
 		app.values_flags[a] |= (value == BT_GATT_CCC_NOTIFY) ? GATT_FLAG_NOTIFY : 0;
 		printk("%04x %i\n", a, app.values_flags[a]);
 	}
-	
-
-	//simulate_temp = value == BT_GATT_CCC_NOTIFY;
-    //BT_UUID_16(attr->uuid, );
-	//void * v3 = service2.attrs[MYGATT_SRV2_CH0_CHRC0].uuid;
-	//void * v3 = service2.attrs[MYGATT_SRV2_CH0_CHRC1].user_data;
-	//LOG_INF("ccc_cfg_changed v1:%p, v2:%p, v3:%p, voltage:%p", v1, v2, v3, &values.voltage[0]);
-    /*
-	if (v == &values.voltage[0]){
-		printk("ccc_cfg_changed 0");
-	}
-	else if (v == &values.voltage[0]){
-		printk("ccc_cfg_changed 1");
-	}
-    */
 }
 
 

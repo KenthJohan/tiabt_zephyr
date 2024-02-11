@@ -149,9 +149,8 @@ const notify_t notifier[NOTFIER_COUNT] = {
 	{0, 0}
 };
 
-void srv2_update(void)
+void mysrv_notifier(void)
 {
-	
 	for(int i = 0; i < NOTFIER_COUNT; ++i)
 	{
 		struct bt_gatt_service_static const * srv = notifier[i].srv;
@@ -166,20 +165,5 @@ void srv2_update(void)
 		app.values[myid]++;
 		printk("notifier %i\n", notifier[i].att);
 		bt_gatt_notify(NULL, &(srv->attrs[att]), &app.values[myid], sizeof(int32_t));
-		
 	}
-
-	//bas_notify();
-	//app.values[0] += 1;
-	//app.values[1] += 1;
-	if(0) {
-		printk("srv2_update\n");
-		//bt_gatt_notify_uuid(NULL, &uuids[MYID_SRV2_CH3], )
-		bt_gatt_notify(NULL, &service2.attrs[MYGATT_SRV2_CH0_CHRC0], &app.values[0], sizeof(app.values[0]));
-		bt_gatt_notify(NULL, &service2.attrs[MYGATT_SRV2_CH1_CHRC0], &app.values[1], sizeof(app.values[1]));
-		//bt_gatt_notify(NULL, &service1.attrs[MYID_SRV2_CH1+5], &app.values[1], sizeof(app.values[1]));
-		//bt_gatt_notify(NULL, &service1.attrs[MYID_SRV2_CH1+6], &app.values[1], sizeof(app.values[1]));
-		//bt_gatt_notify(NULL, &service1.attrs[MYID_SRV2_CH1+7], &app.values[1], sizeof(app.values[1]));
-	}
-	//bt_gatt_notify(NULL, attr, &value, sizeof(value));
 }

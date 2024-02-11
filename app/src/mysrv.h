@@ -1,4 +1,4 @@
 #pragma once
 
 
-void srv2_update(void);
+void mysrv_notifier(void);
