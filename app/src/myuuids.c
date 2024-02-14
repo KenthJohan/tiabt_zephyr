@@ -16,6 +16,7 @@
 int32_t gatt_flags[MYGATT_COUNT];
 
 const struct bt_uuid_128 uuids[MYGATT_COUNT] = {
+	[MYGATT_SRV1] = MY_UUID_SRV(MYGATT_SRV1),
 	[MYGATT_SRV2] = MY_UUID_SRV(MYGATT_SRV2),
 	[MYGATT_SRV2_CH0_CHRC0] = MY_UUID_CHRC(MYID_ADC_CH0),
 	[MYGATT_SRV2_CH1_CHRC0] = MY_UUID_CHRC(MYID_ADC_CH1),
@@ -36,7 +37,7 @@ const struct bt_uuid_128 uuids[MYGATT_COUNT] = {
 };
 
 
-void extract(const struct bt_uuid *uuid, uint64_t * w32, uint16_t * w1, uint16_t * w2, uint16_t * w3, uint32_t * w64)
+void uuid_extract(const struct bt_uuid *uuid, uint64_t * w32, uint16_t * w1, uint16_t * w2, uint16_t * w3, uint32_t * w64)
 {
 	if(w1) {
     	uint16_t tmp;
@@ -58,11 +59,11 @@ void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value)
 {
     const struct bt_uuid *uuid = attr[-1].uuid;
 	uint16_t w1;
-	extract(uuid, NULL, &w1, NULL, NULL, NULL);
+	uuid_extract(uuid, NULL, &w1, NULL, NULL, NULL);
 	if(w1 >= 0 && w1 < MYID_COUNT) {
-		app.values_flags[w1] &= ~GATT_FLAG_NOTIFY;
-		app.values_flags[w1] |= (value == BT_GATT_CCC_NOTIFY) ? GATT_FLAG_NOTIFY : 0;
-		printk("%04x %i\n", w1, app.values_flags[w1]);
+		app.values_flags[w1] &= ~MYFLAG_NOTIFY;
+		app.values_flags[w1] |= (value == BT_GATT_CCC_NOTIFY) ? MYFLAG_NOTIFY : 0;
+		printk("ccc_cfg_changed1: w1:%04X flags:%08X\n", w1, app.values_flags[w1]);
 	}
 }
 

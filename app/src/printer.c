@@ -29,3 +29,14 @@ void mcp356x_config_print_temperature(struct mcp356x_config * c)
     double celsius = ((double)v -79.32) / (0.2964*10000);
     printf("%08i %08i %20.10f C\n", raw, v, celsius);
 }
+
+/*
+printk("%08X\n", c.lastdata);
+printk("%8i %8i\n", c.num_irq, c.num_drdy);
+printk("    " MCP356X_PRINTF_HEADER "\n");
+printk("avg " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.avg));
+printk("min " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.val_min));
+printk("max " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.val_max));
+printk("n   " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.n));
+egadc_log_REG_IRQ(&c.bus, MCP356X_REG_IRQ);
+*/

@@ -23,6 +23,7 @@ https://github.com/zephyrproject-rtos/zephyr/blob/main/samples/drivers/counter/a
 #include "dpot.h"
 #include "bt.h"
 #include "printer.h"
+#include "mydefs.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_APP_LOG_LEVEL);
@@ -63,8 +64,8 @@ void app_print_temperature(struct mcp356x_config * c)
 
 
 
-struct mcp356x_config c = {
-	.state = EGADC_STATE_START,
+struct mcp356x_config myadc = {
+	.state = EGADC_STATE_UNKNOWN,
 	.bus = SPI_DT_SPEC_GET(DT_NODELABEL(examplesensor0), SPI_WORD_SET(8) | SPI_MODE_GET(0), 1),
 	.irq = GPIO_DT_SPEC_GET(DT_NODELABEL(examplesensor0), irq_gpios),
 	.is_scan = false,
@@ -72,16 +73,19 @@ struct mcp356x_config c = {
 	.gain_reg = MCP356X_CFG_2_GAIN_X_1,
 };
 
-
-struct mcp45hvx1_config c1 = {
-	.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot0))
+struct mcp45hvx1_config dpots[7] = {
+	{.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot0)), .myid = MYID_DPOT0_WIPER},
+	{.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot1)), .myid = MYID_DPOT1_WIPER},
+	{.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot2)), .myid = MYID_DPOT2_WIPER},
+	{.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot3)), .myid = MYID_DPOT3_WIPER},
+	{.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot4)), .myid = MYID_DPOT4_WIPER},
+	{.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot5)), .myid = MYID_DPOT5_WIPER},
+	{.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot6)), .myid = MYID_DPOT6_WIPER},
 };
 
 
 
-
-#define LEDS_COUNT 3
-static const struct gpio_dt_spec leds[LEDS_COUNT] = 
+static const struct gpio_dt_spec leds[MY_LEDS_COUNT] = 
 {
 	GPIO_DT_SPEC_GET(DT_NODELABEL(blue_led_1), gpios), //Blue
 	GPIO_DT_SPEC_GET(DT_NODELABEL(green_led_2), gpios), //Green
@@ -89,93 +93,9 @@ static const struct gpio_dt_spec leds[LEDS_COUNT] =
 };
 
 
-
-
-
-static int dpot_inc = 0;
-static uint8_t pot = 0;
-
-
-
-int main(void)
+int test_leds()
 {
-	printk("Color  \x1b[31;4mtext test\n");
-	LOG_INF("examplesensor0 %s", "" DT_NODE_PATH(DT_NODELABEL(examplesensor0)));
-	LOG_INF("dpot0 %s", "" DT_NODE_PATH(DT_NODELABEL(dpot0)));
-
-	if (!spi_is_ready_dt(&c.bus)) {
-		LOG_ERR("SPI bus is not ready %i", 0);
-		return 0;
-	}
-
-	if (!i2c_is_ready_dt(&c1.bus)) {
-		LOG_ERR("Failed to get pointer to %s device!", c1.bus.bus->name);
-		return -EINVAL;
-	}
-	
-	mybt_init();
-	
-
-	while(1) {
-		mybt_progress();
-		egadc_progress(&c);
-		k_sleep(K_SECONDS(1));
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/*
-	dpot_setup(&c1);
-	
-	counter_start(counter_dev);
-	alarm_cfg.flags = 0;
-	alarm_cfg.ticks = counter_us_to_ticks(counter_dev, DELAY);
-	alarm_cfg.callback = test_counter_interrupt_fn;
-	alarm_cfg.user_data = &alarm_cfg;
-	printk("Set alarm in %u sec (%u ticks)\n",
-	       (uint32_t)(counter_ticks_to_us(counter_dev,
-					   alarm_cfg.ticks) / USEC_PER_SEC),
-	       alarm_cfg.ticks);
-		   
-	{
-		int err = counter_set_channel_alarm(counter_dev, ALARM_CHANNEL_ID, &alarm_cfg);
-		if (-EINVAL == err) {
-			printk("Alarm settings invalid\n");
-		} else if (-ENOTSUP == err) {
-			printk("Alarm setting request not supported\n");
-		} else if (err != 0) {
-			printk("Error\n");
-		}
-	}
-	
-	while(1) {
-		if(dpot_inc){
-			dpot_set(&c1, pot++);
-			dpot_inc = 0;
-		};
-		mybt_progress();
-		k_sleep(K_MSEC(1));
-	}
-	//mybt_init();
-	//while (1){k_sleep(K_MSEC(5000));}
-
-	
-
-
-	for(int i = 0; i < LEDS_COUNT; ++i)
-	{
+	for(int i = 0; i < MY_LEDS_COUNT; ++i) {
 		int ret;
 		if (!gpio_is_ready_dt(leds+i)) {return 0;}
 		ret = gpio_pin_configure_dt(leds+i, GPIO_OUTPUT_ACTIVE);
@@ -185,95 +105,58 @@ int main(void)
 		if (ret < 0) {return 0;}
 	}
 	k_sleep(K_MSEC(500));
-	for(int i = 0; i < LEDS_COUNT; ++i)
-	{
+	for(int i = 0; i < MY_LEDS_COUNT; ++i) {
 		int ret = gpio_pin_set_dt(leds+i,0);
 		if (ret < 0) {return 0;}
 	}
+	return 0;
+}
 
 
+int main(void)
+{
+	//printk("Color  \x1b[31;4mtext test\n");
+	LOG_INF("examplesensor0 %s", "" DT_NODE_PATH(DT_NODELABEL(examplesensor0)));
+	LOG_INF("dpot0 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot0)), dpots[0].bus.addr);
+	LOG_INF("dpot1 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot1)), dpots[1].bus.addr);
+	LOG_INF("dpot2 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot2)), dpots[2].bus.addr);
+	LOG_INF("dpot3 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot3)), dpots[3].bus.addr);
+	LOG_INF("dpot4 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot4)), dpots[4].bus.addr);
+	LOG_INF("dpot5 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot5)), dpots[5].bus.addr);
+	LOG_INF("dpot6 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot6)), dpots[6].bus.addr);
 
-	int appstate = APP_START;
-
-	while (1)
-	{
-		{
-			int ret = gpio_pin_toggle_dt(leds+MY_LEDS_BEATS);
-			if (ret < 0) {return 0;}
-		}
-
-		if(c.status & EGADC_TIMEOUT_BIT)
-		{
-			appstate = APP_INIT_ADC;
-			c.status &= ~EGADC_TIMEOUT_BIT;
-		}
-
-
-		switch (appstate)
-		{
-		case APP_WAITING:
-			if(c.num_drdy > 0)
-			{
-				//app_print_voltage_ref(&c);
-				//app_print_temperature(&c);
-				egadc_set_ch(&c, MCP356X_CH_CH3);
-				appstate = APP_PRINT_ADC;
-			}
-			else
-			{
-				LOG_INF("APP_WAITING No respond from ADC");
-				gpio_pin_set_dt(leds + MY_LEDS_WAITING, 1);
-				k_sleep(K_MSEC(500));
-				gpio_pin_set_dt(leds + MY_LEDS_WAITING, 0);
-				k_sleep(K_MSEC(500));
-			}
-			break;
-
-		case APP_START:
-			LOG_INF("APP_START");
-			egadc_setup_board(&c);
-			appstate = APP_INIT_ADC;
-			break;
-
-		case APP_INIT_ADC:
-			LOG_INF("APP_INIT_ADC");
-			egadc_setup_adc(&c);
-			appstate = APP_WAITING;
-			break;
-
-		case APP_PRINT_ADC:{
-			k_sleep(K_MSEC(1000));
-			app_print_voltage(&c);
-			egadc_adc_value_reset(&c);
-			break;}
-
-		default:
-			break;
-		}
-
-
-
-
-		//printk("%08X\n", c.lastdata);
-		
-		
-		//printk("%8i %8i\n", c.num_irq, c.num_drdy);
-		//printk("    " MCP356X_PRINTF_HEADER "\n");
-		//printk("avg " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.avg));
-		//printk("min " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.val_min));
-		//printk("max " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.val_max));
-		//printk("n   " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.n));
-		
-		//egadc_log_REG_IRQ(&c.bus, MCP356X_REG_IRQ);
-
-		
-		
-		//mybt_progress();
-		//bt_bas_set_battery_level(i++);
-
-		//k_sem_give(&c.acq_sem);
+	if (!spi_is_ready_dt(&myadc.bus)) {
+		LOG_ERR("SPI bus is not ready %i", 0);
+		return 0;
 	}
-	*/
+	
+	for(int i = 0; i < 7; ++i) {
+		if (!i2c_is_ready_dt(&dpots[i].bus)) {
+			LOG_ERR("Failed to get pointer to %s device!", dpots[i].bus.bus->name);
+			return -EINVAL;
+		}
+	}
+
+	mybt_init();
+	test_leds();
+	
+
+	while(1) {
+		mybt_progress();
+		egadc_progress(&myadc);
+		dpot_progress(&dpots[0]);
+		dpot_progress(&dpots[1]);
+		dpot_progress(&dpots[2]);
+		dpot_progress(&dpots[3]);
+		dpot_progress(&dpots[4]);
+		dpot_progress(&dpots[5]);
+		dpot_progress(&dpots[6]);
+		k_sleep(K_SECONDS(1));
+	}
+
+
+
+	return 0;
 }
 
 

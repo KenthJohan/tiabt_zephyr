@@ -242,7 +242,6 @@ void egadc_setup_adc(struct mcp356x_config * config)
 		LOG_INF("%s: %08x", MCP356X_REG_tostring(reg), value);
 	}
 	*/
-
 }
 
 
@@ -290,7 +289,7 @@ static void mcp356x_acquisition_thread(struct mcp356x_config * config)
 		// Wait for IRQ callback to give this semaphore:
 		rv = k_sem_take(&config->drdy_sem, K_SECONDS(1));
 		if(rv != 0) {
-			LOG_ERR("mcp356x_acquisition_thread: k_sem_take: %i\n", rv);
+			//LOG_ERR("mcp356x_acquisition_thread: k_sem_take: %i\n", rv);
 			config->status |= EGADC_TIMEOUT_BIT;
 			continue;
 		}
@@ -366,7 +365,7 @@ int egadc_setup_board(struct mcp356x_config * config)
 			0, K_NO_WAIT);
 	err = k_thread_name_set(&config->thread, "mcp356x");
 	if (err) {
-		LOG_ERR("k_thread_name_set error: %i\n", err);
+		LOG_WRN("k_thread_name_set error: %i\n", err);
 		return err;
 	}
 	return 0;
@@ -390,19 +389,16 @@ void egadc_adc_value_reset(struct mcp356x_config * config)
 
 void egadc_progress(struct mcp356x_config * config)
 {
-	switch (config->state)
-	{
+	switch (config->state) {
 	case EGADC_STATE_START:
 		LOG_INF("EGADC_STATE_START");
-		if(config->status & EGADC_TIMEOUT_BIT) {
-			config->state = EGADC_STATE_INIT;
-			config->status &= ~EGADC_TIMEOUT_BIT;
-		}
+		egadc_setup_board(config);
+		config->state = EGADC_STATE_INIT;
 		break;
 
 	case EGADC_STATE_INIT:
 		LOG_INF("EGADC_STATE_INIT");
-		egadc_setup_adc(&config);
+		egadc_setup_adc(config);
 		egadc_set_ch(config, MCP356X_CH_CH3);
 		config->state = EGADC_STATE_WAIT0;
 		config->time0 = 0;
@@ -430,16 +426,10 @@ void egadc_progress(struct mcp356x_config * config)
 	case EGADC_STATE_READY:
 		if(config->status & EGADC_TIMEOUT_BIT) {
 			config->state = EGADC_STATE_INIT;
-			config->status &= ~EGADC_TIMEOUT_BIT;
 		}
 		break;
 
 	default:
 		break;
 	}
-
-
-
-
-
 }

@@ -38,26 +38,62 @@
 // ADC_SDO |  ---gray-----| 13   | D12 | (PA6,21,MISO)
 // ADC_INT |  ---purple---| 23   | D7  | (PC13)
 
+// Connect cables as following:
+// ADC PCB  |  cable color | CN7  | 
+// =========|==============|======|
+// I2C3_SCL |  ---yellow---| 28   |
+// I2C3_SDA |  ---green----| 30   |
+// I2C1_SCL |  ---yellow---| 3    |
+// I2C1_SDA |  ---green----| 5    |
 
 
 &spi1 {
-    status = "okay";
-    pinctrl-0 = <&spi1_nss_pa4 &spi1_sck_pa5 &spi1_miso_pa6 &spi1_mosi_pa7>;
-    cs-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
+	status = "okay";
+	pinctrl-0 = <&spi1_nss_pa4 &spi1_sck_pa5 &spi1_miso_pa6 &spi1_mosi_pa7>;
+	cs-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
 	examplesensor0: examplesensor@0 {
 		compatible = "zephyr,examplesensor";
 		spi-max-frequency = <20000000>;
-        irq-gpios = <&gpioc 13 GPIO_ACTIVE_LOW>;
+		irq-gpios = <&gpioc 13 GPIO_ACTIVE_LOW>;
 		reg = <0>;
 	};
 };
 
 &i2c3 {
-    status = "okay";
+	status = "okay";
 	clock-frequency = <I2C_BITRATE_STANDARD>;
-	dpot0: dpot@0 {
+	dpot0: dpot@3c {
 		compatible = "zephyr,dpot";
-		reg = <0>;
+		reg = <0x3c>;
+	};
+	dpot1: dpot@3d {
+		compatible = "zephyr,dpot";
+		reg = <0x3d>;
+	};
+	dpot2: dpot@3e {
+		compatible = "zephyr,dpot";
+		reg = <0x3e>;
+	};
+	dpot3: dpot@3f {
+		compatible = "zephyr,dpot";
+		reg = <0x3f>;
+	};
+};
+
+&i2c1 {
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	dpot4: dpot@3c {
+		compatible = "zephyr,dpot";
+		reg = <0x3c>;
+	};
+	dpot5: dpot@3d {
+		compatible = "zephyr,dpot";
+		reg = <0x3d>;
+	};
+	dpot6: dpot@3E {
+		compatible = "zephyr,dpot";
+		reg = <0x3e>;
 	};
 };
 

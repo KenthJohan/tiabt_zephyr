@@ -6,23 +6,23 @@
 #define ADC9_VREF_MICRO_VOLT 2048*1000
 #define TIABT_VREF_MICRO_VOLT 3000*1000
 
-enum app_state
-{
+typedef enum {
 	APP_START,
 	APP_WAITING,
 	APP_INIT_ADC,
 	APP_PRINT_ADC
-};
+} app_state_t;
 
-enum my_leds
-{
+typedef enum {
 	MY_LEDS_OTHER,
 	MY_LEDS_BEATS,
 	MY_LEDS_WAITING,
 	MY_LEDS_COUNT
-};
+} my_leds_t;
 
 typedef enum {
+	MYGATT_SRV1,
+
 	MYGATT_SRV2,
 	MYGATT_SRV2_CH0_CHRC0,
 	MYGATT_SRV2_CH0_CHRC1,
@@ -136,7 +136,13 @@ typedef enum {
 } myid_t;
 
 
-#define GATT_FLAG_NOTIFY UINT32_C(0x00000001)
+
+
+
+
+
+#define MYFLAG_NOTIFY UINT32_C(0x00000001)
+#define MYFLAG_SETVAL UINT32_C(0x00000002)
 
 
 typedef struct {
@@ -145,3 +151,7 @@ typedef struct {
 } app_t;
 
 extern app_t app;
+
+
+
+char const * myid_t_tostr(myid_t id);

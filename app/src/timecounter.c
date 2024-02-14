@@ -94,4 +94,21 @@ void timecounter_init()
 		LOG_ERR("Timer device not ready.\n");
 		return 0;
 	}
+	counter_start(counter_dev);
+	alarm_cfg.flags = 0;
+	alarm_cfg.ticks = counter_us_to_ticks(counter_dev, DELAY);
+	alarm_cfg.callback = test_counter_interrupt_fn;
+	alarm_cfg.user_data = &alarm_cfg;
+	printk("Set alarm in %u sec (%u ticks)\n",(uint32_t)(counter_ticks_to_us(counter_dev,alarm_cfg.ticks) / USEC_PER_SEC),alarm_cfg.ticks);
+		   
+	{
+		int err = counter_set_channel_alarm(counter_dev, ALARM_CHANNEL_ID, &alarm_cfg);
+		if (-EINVAL == err) {
+			printk("Alarm settings invalid\n");
+		} else if (-ENOTSUP == err) {
+			printk("Alarm setting request not supported\n");
+		} else if (err != 0) {
+			printk("Error\n");
+		}
+	}
 }
