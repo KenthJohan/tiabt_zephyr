@@ -81,7 +81,9 @@ static ssize_t write_signed(struct bt_conn *conn, const struct bt_gatt_attr *att
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
 	}
 	memcpy(value + offset, buf, len);
+
     printk("write_signed value: %i\n", app.values[MYID_DPOT0_WIPER]);
+	
 	return len;
 }
 
@@ -136,7 +138,7 @@ typedef struct
 	myid_t id;
 } notify_t;
 
-#define NOTFIER_COUNT 8
+#define NOTFIER_COUNT 20
 const notify_t notifier[NOTFIER_COUNT] = {
 	{&service2, MYGATT_SRV2_CH0_CHRC0, MYID_ADC_CH0},
 	{&service2, MYGATT_SRV2_CH1_CHRC0, MYID_ADC_CH1},
@@ -146,6 +148,13 @@ const notify_t notifier[NOTFIER_COUNT] = {
 	{&service2, MYGATT_SRV2_CH5_CHRC0, MYID_ADC_CH5},
 	{&service2, MYGATT_SRV2_CH6_CHRC0, MYID_ADC_CH6},
 	{&service2, MYGATT_SRV2_CH7_CHRC0, MYID_ADC_CH7},
+	{&service3, MYGATT_SRV3_DPOT0_CHRC0, MYID_DPOT0_WIPER},
+	{&service3, MYGATT_SRV3_DPOT1_CHRC0, MYID_DPOT1_WIPER},
+	{&service3, MYGATT_SRV3_DPOT2_CHRC0, MYID_DPOT2_WIPER},
+	{&service3, MYGATT_SRV3_DPOT3_CHRC0, MYID_DPOT3_WIPER},
+	{&service3, MYGATT_SRV3_DPOT4_CHRC0, MYID_DPOT4_WIPER},
+	{&service3, MYGATT_SRV3_DPOT5_CHRC0, MYID_DPOT5_WIPER},
+	{&service3, MYGATT_SRV3_DPOT6_CHRC0, MYID_DPOT6_WIPER},
 	{0, 0}
 };
 
@@ -155,7 +164,7 @@ void mysrv_notifier(void)
 	{
 		struct bt_gatt_service_static const * srv = notifier[i].srv;
 		if(srv == NULL) {
-			continue;
+			break;
 		}
 		int myid = notifier[i].id;
 		if((app.values_flags[myid] & GATT_FLAG_NOTIFY) == 0) {

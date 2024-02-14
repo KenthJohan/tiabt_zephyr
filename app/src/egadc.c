@@ -284,14 +284,12 @@ static void mcp356x_acquisition_thread(struct mcp356x_config * config)
 {
 	LOG_INF("mcp356x_acquisition_thread started!");
 	config->status |= EGADC_THREAD_STARTED_BIT;
-	while (true)
-	{
+	while (true) {
 		int rv = 0;
 
 		// Wait for IRQ callback to give this semaphore:
 		rv = k_sem_take(&config->drdy_sem, K_SECONDS(1));
-		if(rv != 0)
-		{
+		if(rv != 0) {
 			LOG_ERR("mcp356x_acquisition_thread: k_sem_take: %i\n", rv);
 			config->status |= EGADC_TIMEOUT_BIT;
 			continue;
@@ -303,22 +301,19 @@ static void mcp356x_acquisition_thread(struct mcp356x_config * config)
 		int32_t value = 0;
 		uint8_t channel = 0;
 		rv = get_data_11(&config->bus, &value, &channel);
-		if (rv)
-		{
+		if (rv) {
 			LOG_ERR("mcp356x_acquisition_thread error: get_data_11:%i\n", rv);
 			continue;
 		}
 
 		// Protect array bounds
-		if (channel >= MCP356X_CHANNEL_COUNT)
-		{
+		if (channel >= MCP356X_CHANNEL_COUNT) {
 			LOG_ERR("mcp356x_acquisition_thread error: channel out of bounds:%i\n", channel);
 			continue;
 		}
 
 		uint8_t gain_reg = config->gain_reg;
-		if(config->is_scan)
-		{
+		if(config->is_scan) {
 			gain_reg = MCP356X_get_scan_channel_gain(channel);
 		}
 
@@ -336,33 +331,28 @@ int egadc_setup_board(struct mcp356x_config * config)
 	LOG_INF("Configuring port %s %i",config->irq.port->name, config->irq.pin);
 	int err;
 	err = gpio_pin_configure_dt(&config->irq, GPIO_INPUT);
-	if (err)
-	{
+	if (err) {
 		LOG_ERR("gpio_pin_configure_dt error: %i\n", err);
 		return err;
 	}
 	err = gpio_pin_interrupt_configure_dt(&config->irq, GPIO_INT_EDGE_TO_ACTIVE);
-	if (err)
-	{
+	if (err) {
 		LOG_ERR("gpio_pin_interrupt_configure_dt error: %i\n", err);
 		return err;
 	}
 	gpio_init_callback(&config->drdy_cb, drdy_callback, BIT(config->irq.pin));
 	err = gpio_add_callback(config->irq.port, &config->drdy_cb);
-	if (err)
-	{
+	if (err) {
 		LOG_ERR("gpio_add_callback error: %i\n", err);
 		return err;
 	}
 	err = k_sem_init(&config->acq_sem, 0, 1);
-	if (err)
-	{
+	if (err) {
 		LOG_ERR("k_sem_init error: %i\n", err);
 		return err;
 	}
 	err = k_sem_init(&config->drdy_sem, 0, 1);
-	if (err)
-	{
+	if (err) {
 		LOG_ERR("k_sem_init error: %i\n", err);
 		return err;
 	}
@@ -375,8 +365,7 @@ int egadc_setup_board(struct mcp356x_config * config)
 			//0,
 			0, K_NO_WAIT);
 	err = k_thread_name_set(&config->thread, "mcp356x");
-	if (err)
-	{
+	if (err) {
 		LOG_ERR("k_thread_name_set error: %i\n", err);
 		return err;
 	}
@@ -394,3 +383,63 @@ void egadc_adc_value_reset(struct mcp356x_config * config)
 }
 
 
+
+
+
+
+
+void egadc_progress(struct mcp356x_config * config)
+{
+	switch (config->state)
+	{
+	case EGADC_STATE_START:
+		LOG_INF("EGADC_STATE_START");
+		if(config->status & EGADC_TIMEOUT_BIT) {
+			config->state = EGADC_STATE_INIT;
+			config->status &= ~EGADC_TIMEOUT_BIT;
+		}
+		break;
+
+	case EGADC_STATE_INIT:
+		LOG_INF("EGADC_STATE_INIT");
+		egadc_setup_adc(&config);
+		egadc_set_ch(config, MCP356X_CH_CH3);
+		config->state = EGADC_STATE_WAIT0;
+		config->time0 = 0;
+		break;
+
+	case EGADC_STATE_WAIT0:
+		if(config->num_drdy > 0){
+			config->state = EGADC_STATE_READY;
+			LOG_INF("EGADC_STATE_READY");
+		} else {
+			config->time0++;
+			if(config->time0 > 10) {
+				LOG_INF("No respond from ADC");
+				config->state = EGADC_STATE_INIT;
+			}
+			/*
+			gpio_pin_set_dt(leds + MY_LEDS_WAITING, 1);
+			k_sleep(K_MSEC(500));
+			gpio_pin_set_dt(leds + MY_LEDS_WAITING, 0);
+			k_sleep(K_MSEC(500));
+			*/
+		}
+		break;
+
+	case EGADC_STATE_READY:
+		if(config->status & EGADC_TIMEOUT_BIT) {
+			config->state = EGADC_STATE_INIT;
+			config->status &= ~EGADC_TIMEOUT_BIT;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+
+
+
+
+}

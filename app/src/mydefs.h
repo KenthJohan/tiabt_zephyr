@@ -2,6 +2,26 @@
 #include <stdint.h>
 
 
+// The ADC9 uses 2000mV voltage ref chip MCP1501
+#define ADC9_VREF_MICRO_VOLT 2048*1000
+#define TIABT_VREF_MICRO_VOLT 3000*1000
+
+enum app_state
+{
+	APP_START,
+	APP_WAITING,
+	APP_INIT_ADC,
+	APP_PRINT_ADC
+};
+
+enum my_leds
+{
+	MY_LEDS_OTHER,
+	MY_LEDS_BEATS,
+	MY_LEDS_WAITING,
+	MY_LEDS_COUNT
+};
+
 typedef enum {
 	MYGATT_SRV2,
 	MYGATT_SRV2_CH0_CHRC0,

@@ -9,6 +9,15 @@
 #define EGADC_TIMEOUT_BIT        0x00000001
 #define EGADC_THREAD_STARTED_BIT 0x00000002
 
+typedef enum {
+	EGADC_STATE_UNKNOWN,
+	EGADC_STATE_START,
+	EGADC_STATE_INIT,
+	EGADC_STATE_WAIT0,
+	EGADC_STATE_WAIT1,
+	EGADC_STATE_READY,
+} egadc_state_t;
+
 struct mcp356x_config
 {
 	uint32_t status;
@@ -20,6 +29,8 @@ struct mcp356x_config
 	struct k_thread thread;       // Acquisition thread
 	int num_irq;
 	int num_drdy;
+	uint32_t time0;
+	int state;
 
 	int32_t raw_iir[MCP356X_CHANNEL_COUNT];
 	int32_t raw_min[MCP356X_CHANNEL_COUNT];
@@ -31,6 +42,8 @@ struct mcp356x_config
 };
 
 
+
+
 int egadc_setup_board(struct mcp356x_config * config);
 void egadc_setup_adc(struct mcp356x_config * config);
 void egadc_set_ch(struct mcp356x_config * config, uint8_t ch);
@@ -38,3 +51,5 @@ void egadc_set_mux(struct mcp356x_config * config, uint8_t mux);
 
 void egadc_adc_value_reset(struct mcp356x_config * config);
 int egadc_log_REG_IRQ(const struct spi_dt_spec *bus, uint8_t reg);
+
+void egadc_progress(struct mcp356x_config * config);

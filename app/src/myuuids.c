@@ -36,7 +36,14 @@ const struct bt_uuid_128 uuids[MYGATT_COUNT] = {
 };
 
 
-
+void extract(const struct bt_uuid *uuid, uint64_t * w32, uint16_t * w1, uint16_t * w2, uint16_t * w3, uint32_t * w64)
+{
+	if(w1) {
+    	uint16_t tmp;
+    	memcpy(&tmp, &BT_UUID_128(uuid)->val[10], sizeof(tmp));
+		(*w1) = sys_le16_to_cpu(tmp);
+	}
+}
 
 
 void print_uuid(const struct bt_uuid *uuid)
@@ -50,14 +57,12 @@ void print_uuid(const struct bt_uuid *uuid)
 void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value)
 {
     const struct bt_uuid *uuid = attr[-1].uuid;
-    uint16_t tmp4;
-    memcpy(&tmp4, &BT_UUID_128(uuid)->val[10], sizeof(tmp4));
-	//print_uuid(uuid);
-	int a = sys_le16_to_cpu(tmp4);
-	if(a >= 0 && a < MYID_COUNT) {
-		app.values_flags[a] &= ~GATT_FLAG_NOTIFY;
-		app.values_flags[a] |= (value == BT_GATT_CCC_NOTIFY) ? GATT_FLAG_NOTIFY : 0;
-		printk("%04x %i\n", a, app.values_flags[a]);
+	uint16_t w1;
+	extract(uuid, NULL, &w1, NULL, NULL, NULL);
+	if(w1 >= 0 && w1 < MYID_COUNT) {
+		app.values_flags[w1] &= ~GATT_FLAG_NOTIFY;
+		app.values_flags[w1] |= (value == BT_GATT_CCC_NOTIFY) ? GATT_FLAG_NOTIFY : 0;
+		printk("%04x %i\n", w1, app.values_flags[w1]);
 	}
 }
 
