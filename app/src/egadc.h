@@ -50,6 +50,5 @@ void egadc_set_ch(struct mcp356x_config * config, uint8_t ch);
 void egadc_set_mux(struct mcp356x_config * config, uint8_t mux);
 
 void egadc_adc_value_reset(struct mcp356x_config * config);
-int egadc_log_REG_IRQ(const struct spi_dt_spec *bus, uint8_t reg);
 
 void egadc_progress(struct mcp356x_config * config);

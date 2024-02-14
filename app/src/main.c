@@ -40,8 +40,7 @@ void app_print_voltage_ref(struct mcp356x_config * c)
 	egadc_adc_value_reset(c);
 	egadc_set_mux(c, MCP356X_MUX_VIN_NEG_AGND | MCP356X_MUX_VIN_POS_VREF_EXT_PLUS);
 	int n = 10;
-	while (n--)
-	{
+	while (n--) {
 		mcp356x_config_print_voltage(c);
 		egadc_adc_value_reset(c);
 		k_sleep(K_MSEC(500));
@@ -54,8 +53,7 @@ void app_print_temperature(struct mcp356x_config * c)
 	LOG_INF("Checking temperature MCP356X_MUX_VIN_POS_TEMP");
 	egadc_set_ch(c, MCP356X_CH_TEMP);
 	int n = 10;
-	while (n--)
-	{
+	while (n--) {
 		//printf("%04i %f C\n", voltage, celcius * (c->vref_mv / 3.3));
 		k_sleep(K_MSEC(500));
 	}
@@ -95,6 +93,7 @@ static const struct gpio_dt_spec leds[MY_LEDS_COUNT] =
 
 int test_leds()
 {
+	LOG_INF("Testing LEDS");
 	for(int i = 0; i < MY_LEDS_COUNT; ++i) {
 		int ret;
 		if (!gpio_is_ready_dt(leds+i)) {return 0;}
@@ -125,17 +124,23 @@ int main(void)
 	LOG_INF("dpot5 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot5)), dpots[5].bus.addr);
 	LOG_INF("dpot6 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot6)), dpots[6].bus.addr);
 
+
+	LOG_INF("Checking SPI BUS");
 	if (!spi_is_ready_dt(&myadc.bus)) {
 		LOG_ERR("SPI bus is not ready %i", 0);
 		return 0;
 	}
+	LOG_INF("Checking SPI OK");
 	
+	LOG_INF("Checking I2C BUS");
 	for(int i = 0; i < 7; ++i) {
 		if (!i2c_is_ready_dt(&dpots[i].bus)) {
 			LOG_ERR("Failed to get pointer to %s device!", dpots[i].bus.bus->name);
 			return -EINVAL;
 		}
 	}
+	LOG_INF("Checking I2C OK");
+
 
 	mybt_init();
 	test_leds();

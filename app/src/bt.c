@@ -17,20 +17,20 @@
 
 #include "mysrv.h"
 
-LOG_MODULE_REGISTER(adc_svc, CONFIG_APP_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt, CONFIG_APP_LOG_LEVEL);
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		printk("Connection failed (err 0x%02x)\n", err);
+		LOG_ERR("Connection failed (err 0x%02x)", err);
 	} else {
-		printk("Connected\n");
+		LOG_INF("Connected");
 	}
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected (reason 0x%02x)\n", reason);
+	LOG_INF("Disconnected (reason 0x%02x)", reason);
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
@@ -60,12 +60,13 @@ static void bt_ready(int err)
 void mybt_init(void)
 {
 	int err;
-	printk("bt_enable\n");
+	LOG_INF("Enabling bluetooth");
 	err = bt_enable(bt_ready);
 	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
+		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return;
 	}
+	LOG_INF("Bluetooth enabled");
 }
 
 void mybt_progress(void)

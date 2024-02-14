@@ -5,12 +5,13 @@
 #include <zephyr/logging/log.h>
 
 #include "MCP356X.h"
+#include "mydefs.h"
 
 
-LOG_MODULE_REGISTER(adc_mcp356x, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(egadc, LOG_LEVEL_DBG);
 
 
-void MCP356X_log_REG_IRQ(uint32_t value)
+static void MCP356X_log_REG_IRQ(uint32_t value)
 {
 	LOG_INF("MCP356X_IRQ_MASK_EN_STP:        %i", !!(value & MCP356X_IRQ_MASK_EN_STP));
 	LOG_INF("MCP356X_IRQ_MASK_EN_FASTCMD:    %i", !!(value & MCP356X_IRQ_MASK_EN_FASTCMD));
@@ -22,13 +23,13 @@ void MCP356X_log_REG_IRQ(uint32_t value)
 	LOG_INF("MCP356X_IRQ_MASK_UNIMPLEMENTED: %i", !!(value & MCP356X_IRQ_MASK_UNIMPLEMENTED));
 }
 
-void MCP356X_log_REG_MUX(uint32_t value)
+static void MCP356X_log_REG_MUX(uint32_t value)
 {
 	LOG_INF("MCP356X_REG_MUX_VIN_POS: %s", MCP356X_MUX_POS_to_str(value));
 	LOG_INF("MCP356X_REG_MUX_VIN_NEG: %s", MCP356X_MUX_NEG_to_str(value));
 }
 
-void MCP356X_log_REG(uint32_t reg, uint32_t value)
+static void MCP356X_log_REG(uint32_t reg, uint32_t value)
 {
 	switch (reg)
 	{
@@ -46,7 +47,7 @@ void MCP356X_log_REG(uint32_t reg, uint32_t value)
 
 
 
-int transceive(const struct spi_dt_spec *bus, uint8_t *tx, uint8_t *rx, uint8_t reg, uint8_t len, uint8_t cmd)
+static int transceive(const struct spi_dt_spec *bus, uint8_t *tx, uint8_t *rx, uint8_t reg, uint8_t len, uint8_t cmd)
 {
 	struct spi_buf buf_tx[] = {{.buf = tx,.len = len+1}};
 	struct spi_buf buf_rx[] = {{.buf = rx,.len = len+1}};
@@ -58,7 +59,7 @@ int transceive(const struct spi_dt_spec *bus, uint8_t *tx, uint8_t *rx, uint8_t 
 }
 
 
-int get(const struct spi_dt_spec *bus, uint8_t reg, uint32_t * value)
+static int get(const struct spi_dt_spec *bus, uint8_t reg, uint32_t * value)
 {
 	uint8_t len = MCP356X_get_len(reg);
 	uint8_t tx[5] = {0};
@@ -73,7 +74,7 @@ int get(const struct spi_dt_spec *bus, uint8_t reg, uint32_t * value)
 In MUX mode, channel is defaulted to 0.
 Get ADC data as (dataformat 11), see datasheet for more info
 */
-int get_data_11(const struct spi_dt_spec *bus, int32_t * out_value, uint8_t * out_channel)
+static int get_data_11(const struct spi_dt_spec *bus, int32_t * out_value, uint8_t * out_channel)
 {
 	uint8_t reg = MCP356X_REG_ADC_DATA;
 	uint8_t len = 4;
@@ -85,7 +86,7 @@ int get_data_11(const struct spi_dt_spec *bus, int32_t * out_value, uint8_t * ou
 }
 
 
-int egadc_log_REG_IRQ(const struct spi_dt_spec *bus, uint8_t reg)
+static int egadc_log_REG_IRQ(const struct spi_dt_spec *bus, uint8_t reg)
 {
 	uint32_t value;
 	int rv = get(bus, reg, &value);
@@ -427,6 +428,14 @@ void egadc_progress(struct mcp356x_config * config)
 		if(config->status & EGADC_TIMEOUT_BIT) {
 			config->state = EGADC_STATE_INIT;
 		}
+		app.values[MYID_ADC_CH0] = MCP356X_raw_to_volt(config->raw_iir[0], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH1] = MCP356X_raw_to_volt(config->raw_iir[1], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH2] = MCP356X_raw_to_volt(config->raw_iir[2], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH3] = MCP356X_raw_to_volt(config->raw_iir[3], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH4] = MCP356X_raw_to_volt(config->raw_iir[4], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH5] = MCP356X_raw_to_volt(config->raw_iir[5], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH6] = MCP356X_raw_to_volt(config->raw_iir[6], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH7] = MCP356X_raw_to_volt(config->raw_iir[7], TIABT_VREF_MICRO_VOLT, config->gain_reg);
 		break;
 
 	default:
