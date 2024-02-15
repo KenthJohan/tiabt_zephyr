@@ -2,6 +2,7 @@
 #include "mydefs.h"
 #include "gatt_cpf.h"
 #include "myuuids.h"
+#include "btmisc.h"
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
@@ -13,25 +14,8 @@
 #include <zephyr/sys/byteorder.h>
 
 
-
 LOG_MODULE_REGISTER(mysrv, CONFIG_APP_LOG_LEVEL);
 
-
-//static void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value){}
-
-/*
-BT_GATT_SERVICE_DEFINE(service2,
-
-);
-*/
-
-static ssize_t read_signed(struct bt_conn *conn, const struct bt_gatt_attr *attr,void *buf, uint16_t len, uint16_t offset);
-static ssize_t write_signed(struct bt_conn *conn, const struct bt_gatt_attr *attr,const void *buf, uint16_t len, uint16_t offset,uint8_t flags);
-
-
-
-
-//static void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value){}
 
 BT_GATT_SERVICE_DEFINE(gatt,
 	BT_GATT_PRIMARY_SERVICE((const struct bt_uuid *)&uuids_srv[MYSRV_UUID_SRV1]),
@@ -137,25 +121,12 @@ BT_GATT_SERVICE_DEFINE(gatt,
 	BT_GATT_CUD("DPOT6", BT_GATT_PERM_READ),
 	BT_GATT_CPF(&cpf_dpot),
 
-
-
-
-
-
-
 );
 
 
 
-typedef struct
-{
-	struct bt_gatt_service_static const * srv;
-	mygatt_t att;
-	myid_t id;
-} notify_t;
-
 #define NOTFIER_COUNT 20
-const notify_t notifier[NOTFIER_COUNT] = {
+static const notify_t notifier[NOTFIER_COUNT] = {
 	{&gatt, MYGATT_SRV2_CH0_CHRC0, MYID_ADC_CH0},
 	{&gatt, MYGATT_SRV2_CH1_CHRC0, MYID_ADC_CH1},
 	{&gatt, MYGATT_SRV2_CH2_CHRC0, MYID_ADC_CH2},
@@ -178,56 +149,9 @@ const notify_t notifier[NOTFIER_COUNT] = {
 	{0, 0}
 };
 
-int mysrv_notifier(void)
+
+int mysrv_notify()
 {
-	int err = 0;
-	for(int i = 0; i < NOTFIER_COUNT; ++i) {
-		struct bt_gatt_service_static const * srv = notifier[i].srv;
-		if(srv == NULL) {
-			break;
-		}
-		myid_t id = notifier[i].id;
-		if((app.values_flags[id] & MYFLAG_NOTIFY) == 0) {
-			continue;
-		}
-		mygatt_t att = notifier[i].att;
-		app.values[id]++;
-		LOG_INF("notifier: attribute:%i myid:%s", att, myid_t_tostr(id));
-		int err = bt_gatt_notify(NULL, &(srv->attrs[att]), &app.values[id], sizeof(int32_t));
-		if (err) {
-			LOG_ERR("bt_gatt_notify error: %i\n", err);
-		}
-	}
-	return err;
-}
-
-
-static ssize_t read_signed(struct bt_conn *conn, const struct bt_gatt_attr *attr,void *buf, uint16_t len, uint16_t offset)
-{
-	const char *value = attr->user_data;
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, value, sizeof(int32_t));
-}
-
-static ssize_t write_signed(struct bt_conn *conn, const struct bt_gatt_attr *attr,const void *buf, uint16_t len, uint16_t offset,uint8_t flags)
-{
-    const struct bt_uuid *uuid = attr[0].uuid;
-	print_uuid(uuid);
-	uint8_t *value = attr->user_data;
-	if (offset + len > sizeof(int32_t)) {
-		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
-	}
-	memcpy(value + offset, buf, len);
-
-	uint16_t w1;
-	uuid_extract(uuid, NULL, &w1, NULL, NULL, NULL);
-
-	if(w1 < MYID_COUNT) {
-		int32_t value = app.values[w1];
-		app.values_flags[w1] |= MYFLAG_SETVAL;
-    	//printk("write_signed value: myid:%s value:%i\n", myid_t_tostr(w1), value);
-	} else {
-		LOG_WRN("w1 outside array");
-	}
-	
-	return len;
+	btmisc_notifier(notifier, NOTFIER_COUNT, gatt.attrs);
+	return 0;
 }

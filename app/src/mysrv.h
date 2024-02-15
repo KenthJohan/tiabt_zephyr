@@ -1,4 +1,4 @@
 #pragma once
 
 
-int mysrv_notifier(void);
+int mysrv_notify(void);

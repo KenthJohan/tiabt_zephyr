@@ -71,5 +71,5 @@ void mybt_init(void)
 
 void mybt_progress(void)
 {
-	mysrv_notifier();
+	mysrv_notify();
 }

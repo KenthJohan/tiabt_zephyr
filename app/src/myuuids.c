@@ -45,35 +45,5 @@ const struct bt_uuid_128 uuids_chrc[] = {
 };
 
 
-void uuid_extract(const struct bt_uuid *uuid, uint64_t * w32, uint16_t * w1, uint16_t * w2, uint16_t * w3, uint32_t * w64)
-{
-	if(w1) {
-    	uint16_t tmp;
-    	memcpy(&tmp, &BT_UUID_128(uuid)->val[10], sizeof(tmp));
-		(*w1) = sys_le16_to_cpu(tmp);
-	}
-}
-
-
-void print_uuid(const struct bt_uuid *uuid)
-{
-    char str[256];
-    bt_uuid_to_str(uuid, str, 256);
-	printk("%s\n", str);
-}
-
-// https://github.com/zephyrproject-rtos/zephyr/blob/b4e66299cdf687003ad6d7e010328f468fda1fbd/subsys/bluetooth/host/uuid.c#L41
-void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value)
-{
-    const struct bt_uuid *uuid = attr[-1].uuid;
-	uint16_t w1;
-	uuid_extract(uuid, NULL, &w1, NULL, NULL, NULL);
-	if(w1 >= 0 && w1 < MYID_COUNT) {
-		app.values_flags[w1] &= ~MYFLAG_NOTIFY;
-		app.values_flags[w1] |= (value == BT_GATT_CCC_NOTIFY) ? MYFLAG_NOTIFY : 0;
-		printk("ccc_cfg_changed1: w1:%04X flags:%08X\n", w1, app.values_flags[w1]);
-	}
-}
-
 
 
