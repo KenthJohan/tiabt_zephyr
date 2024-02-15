@@ -1,5 +1,5 @@
 #include "printer.h"
-
+#include <stdio.h>
 #include "egadc.h"
 #include "mydefs.h"
 
@@ -11,7 +11,6 @@ void mcp356x_config_print_voltage(struct mcp356x_config * c)
 	int32_t v_min = MCP356X_raw_to_volt(c->raw_min[index], TIABT_VREF_MICRO_VOLT, c->gain_reg);
 	int32_t v_max = MCP356X_raw_to_volt(c->raw_max[index], TIABT_VREF_MICRO_VOLT, c->gain_reg);
 	int32_t v_pp = v_max - v_min;
-	printk("IRQ:%-3i DRDY:%-3i avg:%-8i min:%-8i max:%-8i pp:%-8i\n", c->num_irq, c->num_drdy, v_iir, v_min, v_max, v_pp);
 	printk("IRQ:%-3i DRDY:%-3i avg:%-8i min:%-8i max:%-8i pp:%-8i\n", c->num_irq, c->num_drdy, v_iir, v_min, v_max, v_pp);
 }
 
@@ -40,3 +39,20 @@ printk("max " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.val_max));
 printk("n   " MCP356X_PRINTF_PLUS "\n", MCP356X_ARGS(c.n));
 egadc_log_REG_IRQ(&c.bus, MCP356X_REG_IRQ);
 */
+
+
+
+
+void app_print_adc_all(app_t * a)
+{
+	printk("%-8i %-8i %-8i %-8i %-8i %-8i %-8i %-8i\n", 
+    a->values[MYID_ADC_CH0],
+    a->values[MYID_ADC_CH1],
+    a->values[MYID_ADC_CH2],
+    a->values[MYID_ADC_CH3],
+    a->values[MYID_ADC_CH4],
+    a->values[MYID_ADC_CH5],
+    a->values[MYID_ADC_CH6],
+    a->values[MYID_ADC_CH7]
+    );
+}

@@ -20,5 +20,5 @@ ssize_t read_signed(struct bt_conn *conn, const struct bt_gatt_attr *attr,void *
 ssize_t write_signed(struct bt_conn *conn, const struct bt_gatt_attr *attr,const void *buf, uint16_t len, uint16_t offset,uint8_t flags);
 
 
-int btmisc_notifier(notify_t * notifier, int count, const struct bt_gatt_attr *attrs);
+int btmisc_notifier(int32_t * values, uint32_t * flags, int vcount, notify_t * notifier, int count, const struct bt_gatt_attr *attrs);
 void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value);

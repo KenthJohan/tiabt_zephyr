@@ -67,7 +67,7 @@ void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value)
 }
 
 
-int btmisc_notifier(notify_t * notifier, int count, const struct bt_gatt_attr *attrs)
+int btmisc_notifier(int32_t * values, uint32_t * flags, int vcount, notify_t * notifier, int count, const struct bt_gatt_attr *attrs)
 {
 	int err = 0;
 	for(int i = 0; i < count; ++i) {
@@ -76,13 +76,16 @@ int btmisc_notifier(notify_t * notifier, int count, const struct bt_gatt_attr *a
 			break;
 		}
 		myid_t id = notifier[i].id;
-		if((app.values_flags[id] & MYFLAG_NOTIFY) == 0) {
+		if(id >= vcount) {
+			continue;
+		}
+		if((flags[id] & MYFLAG_NOTIFY) == 0) {
 			continue;
 		}
 		mygatt_t att = notifier[i].att;
-		app.values[id]++;
+		values[id]++;
 		LOG_INF("notifier: attribute:%i myid:%s", att, myid_t_tostr(id));
-		int err = bt_gatt_notify(NULL, &(attrs[att]), &app.values[id], sizeof(int32_t));
+		int err = bt_gatt_notify(NULL, &(attrs[att]), &values[id], sizeof(int32_t));
 		if (err) {
 			LOG_ERR("bt_gatt_notify error: %i\n", err);
 		}

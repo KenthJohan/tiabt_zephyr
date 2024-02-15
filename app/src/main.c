@@ -149,7 +149,7 @@ int main(void)
 	
 
 	while(1) {
-		mybt_progress();
+		mybt_progress(&app);
 		egadc_progress(&myadc);
 		dpot_progress(&dpots[0]);
 		dpot_progress(&dpots[1]);
@@ -162,7 +162,7 @@ int main(void)
 		switch (app.values[MYID_APP_PRINT_MODE])
 		{
 		case APP_PRINT_MODE_ADC_ALL:
-			mcp356x_config_print_voltage(&myadc);
+			app_print_adc_all(&app);
 			break;
 		
 		default:

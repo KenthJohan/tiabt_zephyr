@@ -1,4 +1,4 @@
 #pragma once
 
-
-int mysrv_notify(void);
+#include "mydefs.h"
+int mysrv_notify(app_t * a);

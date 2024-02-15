@@ -157,8 +157,8 @@ static const notify_t notifier[NOTFIER_COUNT] = {
 };
 
 
-int mysrv_notify()
+int mysrv_notify(app_t * a)
 {
-	btmisc_notifier(notifier, NOTFIER_COUNT, gatt.attrs);
+	btmisc_notifier(a->values, a->values_flags, MYID_COUNT, notifier, NOTFIER_COUNT, gatt.attrs);
 	return 0;
 }

@@ -69,7 +69,7 @@ void mybt_init(void)
 	LOG_INF("Bluetooth enabled");
 }
 
-void mybt_progress(void)
+void mybt_progress(app_t * a)
 {
-	mysrv_notify();
+	mysrv_notify(a);
 }
