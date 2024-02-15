@@ -4,7 +4,8 @@
 #include <zephyr/bluetooth/gatt.h>
 
 
-extern const struct bt_uuid_128 uuids[MYGATT_COUNT];
+extern const struct bt_uuid_128 uuids_chrc[MYGATT_COUNT];
+extern const struct bt_uuid_128 uuids_srv[MYSRV_UUID_COUNT];
 
 
 void ccc_cfg_changed1(const struct bt_gatt_attr *attr, uint16_t value);
