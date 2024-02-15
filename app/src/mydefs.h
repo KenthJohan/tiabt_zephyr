@@ -32,7 +32,11 @@ typedef enum {
 
 typedef enum {
 	MYGATT_SRV1,
-
+	MYGATT_SRV1_APP_PRINT_MODE_CHRC0,
+	MYGATT_SRV1_APP_PRINT_MODE_CHRC1,
+	MYGATT_SRV1_APP_PRINT_MODE_CCC,
+	MYGATT_SRV1_APP_PRINT_MODE_CUD,
+	MYGATT_SRV1_APP_PRINT_MODE_CPF,
 
 
 	MYGATT_SRV2,
@@ -165,6 +169,8 @@ typedef enum {
 
 
 typedef enum {
+	MYID_APP_PRINT_MODE,
+
 	MYID_ADC_CH0,
 	MYID_ADC_CH1,
 	MYID_ADC_CH2,
@@ -197,9 +203,19 @@ typedef enum {
 #define MYFLAG_SETVAL UINT32_C(0x00000002)
 
 
+
+typedef enum {
+	APP_PRINT_MODE_UNKNOWN,
+	APP_PRINT_MODE_NONE,
+	APP_PRINT_MODE_ADC_ALL,
+	APP_PRINT_MODE_COUNT
+} app_print_mode_t;
+
+
 typedef struct {
 	int32_t values[MYID_COUNT];
 	int32_t values_flags[MYID_COUNT];
+	int32_t app_print_mode;
 } app_t;
 
 extern app_t app;

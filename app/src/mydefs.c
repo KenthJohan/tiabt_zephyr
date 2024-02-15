@@ -1,6 +1,8 @@
 #include "mydefs.h"
 
-app_t app;
+app_t app = {
+	.app_print_mode = APP_PRINT_MODE_UNKNOWN
+};
 
 
 char const * myid_t_tostr(myid_t id)

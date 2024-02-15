@@ -21,7 +21,7 @@ https://github.com/zephyrproject-rtos/zephyr/blob/main/samples/drivers/counter/a
 #include "app_version.h"
 #include "egadc.h"
 #include "dpot.h"
-#include "bt.h"
+#include "mybt.h"
 #include "printer.h"
 #include "mydefs.h"
 
@@ -93,7 +93,6 @@ static const struct gpio_dt_spec leds[MY_LEDS_COUNT] =
 
 int test_leds()
 {
-	LOG_INF("Testing LEDS");
 	for(int i = 0; i < MY_LEDS_COUNT; ++i) {
 		int ret;
 		if (!gpio_is_ready_dt(leds+i)) {return 0;}
@@ -142,7 +141,10 @@ int main(void)
 	LOG_INF("Checking I2C OK");
 
 
+	LOG_INF("Init bluetooth");
 	mybt_init();
+
+	LOG_INF("Testing LEDS");
 	test_leds();
 	
 
@@ -156,6 +158,17 @@ int main(void)
 		dpot_progress(&dpots[4]);
 		dpot_progress(&dpots[5]);
 		dpot_progress(&dpots[6]);
+
+		switch (app.values[MYID_APP_PRINT_MODE])
+		{
+		case APP_PRINT_MODE_ADC_ALL:
+			mcp356x_config_print_voltage(&myadc);
+			break;
+		
+		default:
+			break;
+		}
+
 		k_sleep(K_SECONDS(1));
 	}
 

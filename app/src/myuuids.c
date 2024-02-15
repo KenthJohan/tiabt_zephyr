@@ -1,19 +1,7 @@
 #include "myuuids.h"
-#include "mydefs.h"
-
-#include <zephyr/bluetooth/bluetooth.h>
-#include <zephyr/bluetooth/hci.h>
-#include <zephyr/bluetooth/conn.h>
-#include <zephyr/bluetooth/uuid.h>
-#include <zephyr/bluetooth/gatt.h>
-#include <zephyr/bluetooth/services/bas.h>
-#include <zephyr/logging/log.h>
-#include <zephyr/sys/byteorder.h>
 
 #define MY_UUID_CHRC(x) BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x2A5A20B9, UINT16_C(x), 0x4B9C, 0x9C69, 0x4975713E0FF2))
 #define MY_UUID_SRV(x) BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x2A5A20F9, UINT16_C(x), 0x4B9C, 0x9C69, 0x4975713E0FF2))
-
-
 
 const struct bt_uuid_128 uuids_srv[MYSRV_UUID_COUNT] = {
 MY_UUID_SRV(MYSRV_UUID_SRV0),
@@ -23,6 +11,7 @@ MY_UUID_SRV(MYSRV_UUID_SRV3),
 };
 
 const struct bt_uuid_128 uuids_chrc[] = {
+[MYID_APP_PRINT_MODE] = MY_UUID_CHRC(MYID_APP_PRINT_MODE),
 [MYID_ADC_CH0] = MY_UUID_CHRC(MYID_ADC_CH0),
 [MYID_ADC_CH1] = MY_UUID_CHRC(MYID_ADC_CH1),
 [MYID_ADC_CH2] = MY_UUID_CHRC(MYID_ADC_CH2),
