@@ -206,18 +206,18 @@ void egadc_setup_adc(struct mcp356x_config * config)
 	//set(&config->bus, MCP356X_REG_SCAN, 0);
 	
 	set(&config->bus, MCP356X_REG_SCAN, 
-	//MCP356X_SCAN_CH0|
-	//MCP356X_SCAN_CH1|
-	//MCP356X_SCAN_CH2|
-	//MCP356X_SCAN_CH3|
-	//MCP356X_SCAN_CH4|
-	//MCP356X_SCAN_CH5|
-	//MCP356X_SCAN_CH6|
-	//MCP356X_SCAN_CH7|
-	//MCP356X_SCAN_VREF|
-	//MCP356X_SCAN_TEMP|
-	//MCP356X_SCAN_AVDD|
-	//MCP356X_SCAN_OFFSET|
+	MCP356X_SCAN_CH0|
+	MCP356X_SCAN_CH1|
+	MCP356X_SCAN_CH2|
+	MCP356X_SCAN_CH3|
+	MCP356X_SCAN_CH4|
+	MCP356X_SCAN_CH5|
+	MCP356X_SCAN_CH6|
+	MCP356X_SCAN_CH7|
+	MCP356X_SCAN_VREF|
+	MCP356X_SCAN_TEMP|
+	MCP356X_SCAN_AVDD|
+	MCP356X_SCAN_OFFSET|
 	0);
 	
 	//set24_verbose(bus, MCP356X_REG_SCAN, MCP356X_SCAN_CH0);
@@ -400,7 +400,7 @@ void egadc_progress(struct mcp356x_config * config)
 	case EGADC_STATE_INIT:
 		LOG_INF("EGADC_STATE_INIT");
 		egadc_setup_adc(config);
-		egadc_set_ch(config, MCP356X_CH_CH3);
+		//egadc_set_ch(config, MCP356X_CH_CH3);
 		config->state = EGADC_STATE_WAIT0;
 		config->time0 = 0;
 		break;
@@ -426,8 +426,11 @@ void egadc_progress(struct mcp356x_config * config)
 
 	case EGADC_STATE_READY:
 		if(config->status & EGADC_TIMEOUT_BIT) {
+			LOG_INF("ADC Timeout");
+			config->status &= ~EGADC_TIMEOUT_BIT;
 			config->state = EGADC_STATE_INIT;
 		}
+		//printk("raw_iir0: %i\n", config->raw_iir[0]);
 		app.values[MYID_ADC_CH0] = MCP356X_raw_to_volt(config->raw_iir[0], TIABT_VREF_MICRO_VOLT, config->gain_reg);
 		app.values[MYID_ADC_CH1] = MCP356X_raw_to_volt(config->raw_iir[1], TIABT_VREF_MICRO_VOLT, config->gain_reg);
 		app.values[MYID_ADC_CH2] = MCP356X_raw_to_volt(config->raw_iir[2], TIABT_VREF_MICRO_VOLT, config->gain_reg);
@@ -441,4 +444,6 @@ void egadc_progress(struct mcp356x_config * config)
 	default:
 		break;
 	}
+
+	//printk("state: %i\n", config->state);
 }

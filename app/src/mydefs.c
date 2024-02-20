@@ -1,7 +1,10 @@
 #include "mydefs.h"
 
 app_t app = {
-	.app_print_mode = APP_PRINT_MODE_UNKNOWN
+	.app_print_mode = APP_PRINT_MODE_UNKNOWN,
+	.values = {
+		[MYID_APP_PRINT_MODE] = APP_PRINT_MODE_ADC_ALL
+	}
 };
 
 
@@ -9,6 +12,7 @@ char const * myid_t_tostr(myid_t id)
 {
 	switch (id)
 	{
+	case MYID_APP_PRINT_MODE: return "APP_PRINT_MODE";
 	case MYID_ADC_CH0: return "ADC_CH0";
 	case MYID_ADC_CH1: return "ADC_CH1";
 	case MYID_ADC_CH2: return "ADC_CH2";

@@ -63,7 +63,7 @@ void app_print_temperature(struct mcp356x_config * c)
 
 
 struct mcp356x_config myadc = {
-	.state = EGADC_STATE_UNKNOWN,
+	.state = EGADC_STATE_START,
 	.bus = SPI_DT_SPEC_GET(DT_NODELABEL(examplesensor0), SPI_WORD_SET(8) | SPI_MODE_GET(0), 1),
 	.irq = GPIO_DT_SPEC_GET(DT_NODELABEL(examplesensor0), irq_gpios),
 	.is_scan = false,
@@ -141,28 +141,34 @@ int main(void)
 	LOG_INF("Checking I2C OK");
 
 
-	LOG_INF("Init bluetooth");
-	mybt_init();
+	//LOG_INF("Init bluetooth");
+	//mybt_init();
 
 	LOG_INF("Testing LEDS");
 	test_leds();
+
+	
+	LOG_INF("Setup ADC");
+	egadc_setup_adc(&myadc);
 	
 
 	while(1) {
-		mybt_progress(&app);
+		//mybt_progress(&app);
 		egadc_progress(&myadc);
-		dpot_progress(&dpots[0]);
-		dpot_progress(&dpots[1]);
-		dpot_progress(&dpots[2]);
-		dpot_progress(&dpots[3]);
-		dpot_progress(&dpots[4]);
-		dpot_progress(&dpots[5]);
-		dpot_progress(&dpots[6]);
+		//dpot_progress(&dpots[1]);
+		//dpot_progress(&dpots[0]);
+		//dpot_progress(&dpots[2]);
+		//dpot_progress(&dpots[3]);
+		//dpot_progress(&dpots[4]);
+		//dpot_progress(&dpots[5]);
+		//dpot_progress(&dpots[6]);
 
 		switch (app.values[MYID_APP_PRINT_MODE])
 		{
 		case APP_PRINT_MODE_ADC_ALL:
-			app_print_adc_all(&app);
+			if(myadc.state == EGADC_STATE_READY) {
+				app_print_adc_all(&app);
+			}
 			break;
 		
 		default:
