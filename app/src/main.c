@@ -141,8 +141,8 @@ int main(void)
 	LOG_INF("Checking I2C OK");
 
 
-	//LOG_INF("Init bluetooth");
-	//mybt_init();
+	LOG_INF("Init bluetooth");
+	mybt_init();
 
 	LOG_INF("Testing LEDS");
 	test_leds();
@@ -153,15 +153,15 @@ int main(void)
 	
 
 	while(1) {
-		//mybt_progress(&app);
+		mybt_progress(&app);
 		egadc_progress(&myadc);
-		//dpot_progress(&dpots[1]);
-		//dpot_progress(&dpots[0]);
-		//dpot_progress(&dpots[2]);
-		//dpot_progress(&dpots[3]);
-		//dpot_progress(&dpots[4]);
-		//dpot_progress(&dpots[5]);
-		//dpot_progress(&dpots[6]);
+		dpot_progress(&dpots[1]);
+		dpot_progress(&dpots[0]);
+		dpot_progress(&dpots[2]);
+		dpot_progress(&dpots[3]);
+		dpot_progress(&dpots[4]);
+		dpot_progress(&dpots[5]);
+		dpot_progress(&dpots[6]);
 
 		switch (app.values[MYID_APP_PRINT_MODE])
 		{

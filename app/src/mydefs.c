@@ -21,6 +21,14 @@ char const * myid_t_tostr(myid_t id)
 	case MYID_ADC_CH5: return "ADC_CH5";
 	case MYID_ADC_CH6: return "ADC_CH6";
 	case MYID_ADC_CH7: return "ADC_CH7";
+	case MYID_CH0_PIKO_A: return "CH0_PIKO_A";
+	case MYID_CH1_PIKO_A: return "CH1_PIKO_A";
+	case MYID_CH2_PIKO_A: return "CH2_PIKO_A";
+	case MYID_CH3_PIKO_A: return "CH3_PIKO_A";
+	case MYID_CH4_PIKO_A: return "CH4_PIKO_A";
+	case MYID_CH5_PIKO_A: return "CH5_PIKO_A";
+	case MYID_CH6_PIKO_A: return "CH6_PIKO_A";
+	case MYID_CH7_PIKO_A: return "CH7_PIKO_A";
 	case MYID_ADC_OFFSET: return "ADC_VREF";
 	case MYID_ADC_VCM: return "ADC_VCM";
 	case MYID_ADC_AVDD: return "ADC_AVDD";

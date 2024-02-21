@@ -214,10 +214,10 @@ void egadc_setup_adc(struct mcp356x_config * config)
 	MCP356X_SCAN_CH5|
 	MCP356X_SCAN_CH6|
 	MCP356X_SCAN_CH7|
-	MCP356X_SCAN_VREF|
-	MCP356X_SCAN_TEMP|
-	MCP356X_SCAN_AVDD|
-	MCP356X_SCAN_OFFSET|
+	//MCP356X_SCAN_VREF|
+	//MCP356X_SCAN_TEMP|
+	//MCP356X_SCAN_AVDD|
+	//MCP356X_SCAN_OFFSET|
 	0);
 	
 	//set24_verbose(bus, MCP356X_REG_SCAN, MCP356X_SCAN_CH0);
@@ -439,6 +439,15 @@ void egadc_progress(struct mcp356x_config * config)
 		app.values[MYID_ADC_CH5] = MCP356X_raw_to_volt(config->raw_iir[5], TIABT_VREF_MICRO_VOLT, config->gain_reg);
 		app.values[MYID_ADC_CH6] = MCP356X_raw_to_volt(config->raw_iir[6], TIABT_VREF_MICRO_VOLT, config->gain_reg);
 		app.values[MYID_ADC_CH7] = MCP356X_raw_to_volt(config->raw_iir[7], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		int resistor = 1000000;
+		app.values[MYID_CH0_PIKO_A] = app.values[MYID_ADC_CH0] * (1000000 / resistor);
+		app.values[MYID_CH1_PIKO_A] = app.values[MYID_ADC_CH1] * (1000000 / resistor);
+		app.values[MYID_CH2_PIKO_A] = app.values[MYID_ADC_CH2] * (1000000 / resistor);
+		app.values[MYID_CH3_PIKO_A] = app.values[MYID_ADC_CH3] * (1000000 / resistor);
+		app.values[MYID_CH4_PIKO_A] = app.values[MYID_ADC_CH4] * (1000000 / resistor);
+		app.values[MYID_CH5_PIKO_A] = app.values[MYID_ADC_CH5] * (1000000 / resistor);
+		app.values[MYID_CH6_PIKO_A] = app.values[MYID_ADC_CH6] * (1000000 / resistor);
+		app.values[MYID_CH7_PIKO_A] = app.values[MYID_ADC_CH7] * (1000000 / resistor);
 		break;
 
 	default:

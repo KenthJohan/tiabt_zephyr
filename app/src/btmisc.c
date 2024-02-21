@@ -83,7 +83,7 @@ int btmisc_notifier(int32_t * values, uint32_t * flags, int vcount, notify_t * n
 			continue;
 		}
 		mygatt_t att = notifier[i].att;
-		values[id]++;
+		//values[id]++;
 		LOG_INF("notifier: attribute:%i myid:%s", att, myid_t_tostr(id));
 		int err = bt_gatt_notify(NULL, &(attrs[att]), &values[id], sizeof(int32_t));
 		if (err) {
