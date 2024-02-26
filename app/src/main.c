@@ -81,6 +81,8 @@ struct mcp45hvx1_config dpots[7] = {
 	{.bus = I2C_DT_SPEC_GET(DT_NODELABEL(dpot6)), .myid = MYID_DPOT6_WIPER},
 };
 
+static const struct gpio_dt_spec load_switch1 = GPIO_DT_SPEC_GET_OR(DT_NODELABEL(load_switch1), gpios, {0});
+static const struct gpio_dt_spec load_switch2 = GPIO_DT_SPEC_GET_OR(DT_NODELABEL(load_switch2), gpios, {0});
 
 
 static const struct gpio_dt_spec leds[MY_LEDS_COUNT] = 
@@ -123,6 +125,33 @@ int main(void)
 	LOG_INF("dpot5 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot5)), dpots[5].bus.addr);
 	LOG_INF("dpot6 %s, %02X", "" DT_NODE_PATH(DT_NODELABEL(dpot6)), dpots[6].bus.addr);
 
+	LOG_INF("Checking loadswitch1");
+	if (!gpio_is_ready_dt(&load_switch1)) {
+		LOG_ERR("The load switch pin GPIO port is not ready");
+		return 0;
+	}
+
+	LOG_INF("Checking loadswitch2");
+	if (!gpio_is_ready_dt(&load_switch1)) {
+		LOG_ERR("The load switch pin GPIO port is not ready");
+		return 0;
+	}
+
+	{
+		int err = gpio_pin_configure_dt(&load_switch1, GPIO_OUTPUT_INACTIVE);
+		if (err != 0) {
+			LOG_ERR("Configuring GPIO pin failed: %d\n", err);
+			return 0;
+		}
+	}
+
+	{
+		int err = gpio_pin_configure_dt(&load_switch2, GPIO_OUTPUT_INACTIVE);
+		if (err != 0) {
+			LOG_ERR("Configuring GPIO pin failed: %d\n", err);
+			return 0;
+		}
+	}
 
 	LOG_INF("Checking SPI BUS");
 	if (!spi_is_ready_dt(&myadc.bus)) {
@@ -154,7 +183,7 @@ int main(void)
 
 	while(1) {
 		mybt_progress(&app);
-		egadc_progress(&myadc);
+		//egadc_progress(&myadc);
 		dpot_progress(&dpots[1]);
 		dpot_progress(&dpots[0]);
 		dpot_progress(&dpots[2]);
@@ -162,6 +191,24 @@ int main(void)
 		dpot_progress(&dpots[4]);
 		dpot_progress(&dpots[5]);
 		dpot_progress(&dpots[6]);
+
+		if(app.values_flags[MYID_APP_VREG1_EN] & MYFLAG_SETVAL) {
+			app.values_flags[MYID_APP_VREG1_EN] &= ~MYFLAG_SETVAL;
+			LOG_INF("Vreg enable: %i", !!app.values[MYID_APP_VREG1_EN]);
+			int err = gpio_pin_set_dt(&load_switch1, !!app.values[MYID_APP_VREG2_EN]);
+			if (err != 0) {
+				printf("Setting GPIO pin level failed: %d\n", err);
+			}
+		}
+
+		if(app.values_flags[MYID_APP_VREG2_EN] & MYFLAG_SETVAL) {
+			app.values_flags[MYID_APP_VREG2_EN] &= ~MYFLAG_SETVAL;
+			LOG_INF("Vreg enable: %i", !!app.values[MYID_APP_VREG2_EN]);
+			int err = gpio_pin_set_dt(&load_switch2, !!app.values[MYID_APP_VREG2_EN]);
+			if (err != 0) {
+				printf("Setting GPIO pin level failed: %d\n", err);
+			}
+		}
 
 		switch (app.values[MYID_APP_PRINT_MODE])
 		{
