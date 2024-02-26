@@ -76,12 +76,7 @@ void transfer(struct mcp45hvx1_config * config, int cmd, int value)
 
 
 
-int dpot_set(struct mcp45hvx1_config * config, int value)
-{
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WRITE, value);
-	//transfer(config, 0x3C, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_READ, 0);
-	return 0;
-}
+
 
 
 
@@ -130,10 +125,14 @@ void dpot_progress(struct mcp45hvx1_config * config)
 	myid_t id = config->myid;
 	if(id < MYID_COUNT) {
 		if(app.values_flags[id] & MYFLAG_SETVAL) {
-			int32_t value = app.values[id];
 			app.values_flags[id] &= ~MYFLAG_SETVAL;
-			dpot_set(config, value);
-			LOG_INF("Set dpot %s wiper: %i", myid_t_tostr(id), value);
+			int32_t value = app.values[id];
+			if(value >= 0) {
+				transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WRITE, value);
+				LOG_INF("Set dpot %s wiper: %i", myid_t_tostr(id), value);
+			} else {
+				transfer(config, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_WRITE, MCP45HVX1_TCON_R0HW);
+			}
 		}
 	} else {
 		LOG_WRN("id outside array");

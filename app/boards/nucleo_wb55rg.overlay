@@ -39,12 +39,12 @@
 // ADC_INT |  ---purple---| 23   | D7  | (PC13)
 
 // Connect cables as following:
-// ADC PCB  |  cable color | CN7  | 
-// =========|==============|======|
-// I2C3_SCL |  ---yellow---| 28   |
-// I2C3_SDA |  ---green----| 30   |
-// I2C1_SCL |  ---yellow---| 3    |
-// I2C1_SDA |  ---green----| 5    |
+// ADC PCB  |  cable color | Pin      | 
+// =========|==============|==========|
+// I2C3_SCL |  ---yellow---| CN7_28   |
+// I2C3_SDA |  ---green----| CN7_30   |
+// I2C1_SCL |  ---yellow---| CN10_3   |
+// I2C1_SDA |  ---green----| CN10_5   |
 
 
 &spi1 {
