@@ -110,17 +110,19 @@
 
 
 / {
-	// White
+
+
+	// White cable
+
 	load_switch1: load_switch1 {
 		compatible = "power-switch";
-                /* using built-in LED pin for demonstration */
-		gpios = <&gpioc 13 GPIO_ACTIVE_HIGH>;
-	};
-
-	// Grey
-	load_switch2: load_switch2 {
-		compatible = "power-switch";
-                /* using built-in LED pin for demonstration */
 		gpios = <&gpioa 8 GPIO_ACTIVE_HIGH>;
 	};
+
+	// Grey cable
+	load_switch2: load_switch2 {
+		compatible = "power-switch";
+		gpios = <&gpioa 15 GPIO_ACTIVE_HIGH>;
+	};
+
 };

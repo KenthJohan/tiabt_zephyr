@@ -143,6 +143,7 @@ int main(void)
 			LOG_ERR("Configuring GPIO pin failed: %d\n", err);
 			return 0;
 		}
+		//gpio_pin_set_dt(&load_switch1, 1);
 	}
 
 	{
@@ -151,6 +152,7 @@ int main(void)
 			LOG_ERR("Configuring GPIO pin failed: %d\n", err);
 			return 0;
 		}
+		//gpio_pin_set_dt(&load_switch2, 0);
 	}
 
 	LOG_INF("Checking SPI BUS");
@@ -183,7 +185,7 @@ int main(void)
 
 	while(1) {
 		mybt_progress(&app);
-		//egadc_progress(&myadc);
+		egadc_progress(&myadc);
 		dpot_progress(&dpots[1]);
 		dpot_progress(&dpots[0]);
 		dpot_progress(&dpots[2]);
@@ -194,8 +196,8 @@ int main(void)
 
 		if(app.values_flags[MYID_APP_VREG1_EN] & MYFLAG_SETVAL) {
 			app.values_flags[MYID_APP_VREG1_EN] &= ~MYFLAG_SETVAL;
-			LOG_INF("Vreg enable: %i", !!app.values[MYID_APP_VREG1_EN]);
-			int err = gpio_pin_set_dt(&load_switch1, !!app.values[MYID_APP_VREG2_EN]);
+			LOG_INF("Vreg enable load_switch1: %i", !!app.values[MYID_APP_VREG1_EN]);
+			int err = gpio_pin_set_dt(&load_switch1, !!app.values[MYID_APP_VREG1_EN]);
 			if (err != 0) {
 				printf("Setting GPIO pin level failed: %d\n", err);
 			}
@@ -203,7 +205,7 @@ int main(void)
 
 		if(app.values_flags[MYID_APP_VREG2_EN] & MYFLAG_SETVAL) {
 			app.values_flags[MYID_APP_VREG2_EN] &= ~MYFLAG_SETVAL;
-			LOG_INF("Vreg enable: %i", !!app.values[MYID_APP_VREG2_EN]);
+			LOG_INF("Vreg enable load_switch2: %i", !!app.values[MYID_APP_VREG2_EN]);
 			int err = gpio_pin_set_dt(&load_switch2, !!app.values[MYID_APP_VREG2_EN]);
 			if (err != 0) {
 				printf("Setting GPIO pin level failed: %d\n", err);
