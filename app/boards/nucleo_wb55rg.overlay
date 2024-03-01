@@ -116,13 +116,13 @@
 
 	load_switch1: load_switch1 {
 		compatible = "power-switch";
-		gpios = <&gpioa 8 GPIO_ACTIVE_HIGH>;
+		gpios = <&gpioa 8 GPIO_ACTIVE_HIGH>; //CN10.25
 	};
 
 	// Grey cable
 	load_switch2: load_switch2 {
 		compatible = "power-switch";
-		gpios = <&gpioa 15 GPIO_ACTIVE_HIGH>;
+		gpios = <&gpioa 15 GPIO_ACTIVE_HIGH>; //CN10.27
 	};
 
 };

@@ -15,7 +15,10 @@ https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_N
 #define UNIT_VOLTAGE 0x2728
 #define UNIT_AMPERE 0x2704
 #define UNIT_SECOND 0x2703
+#define UNIT_RESISTANCE 0x272A
 #define UNIT_UNKNOWN 0x0000
+
+
 
 
 
@@ -51,6 +54,14 @@ static struct bt_gatt_cpf cpf_piko_ampere = {
 	FORMAT_SINT32,
 	-12, // exponent
 	UNIT_AMPERE,
+	GATT_FORMAT_NAMESPACE, 
+	GATT_FORMAT_DESCRIPTION
+};
+
+static struct bt_gatt_cpf cpf_resistance = {
+	FORMAT_SINT32,
+	0, // exponent
+	UNIT_RESISTANCE,
 	GATT_FORMAT_NAMESPACE, 
 	GATT_FORMAT_DESCRIPTION
 };
