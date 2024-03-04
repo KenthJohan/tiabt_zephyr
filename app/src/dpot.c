@@ -83,37 +83,7 @@ void transfer(struct mcp45hvx1_config * config, int cmd, int value)
 int dpot_setup(struct mcp45hvx1_config * config)
 {
 	transfer(config, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_WRITE, MCP45HVX1_TCON_R0HW | MCP45HVX1_TCON_R0A | MCP45HVX1_TCON_R0W);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WRITE, 255);
-	transfer(config, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_READ, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WIPERDEC, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WIPERDEC, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WIPERDEC, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ, 0);
-	
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WRITE, 4);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WIPERINC, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WIPERINC, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WIPERINC, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WIPERINC, 0);
-	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ, 0);
-
-
-    //write(config, 0x3C, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_WRITE, MCP45HVX1_TCON_R0HW | MCP45HVX1_TCON_R0A | MCP45HVX1_TCON_R0W);
-    //write(config, 0x3C, MEM_TCON | COM_WRITE, 0);
-    //write(config, 0x3C, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WRITE, 0);
-    //test(config, 0x3C, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_READ);
-    //test(config, 0x3C, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_READ);
-
-    //test(config, 0x3C, MEM_WIPER | COM_READ);
-    //test(config, 0x3D);
-    //test(config, 0x3E);
-    //test(config, 0x3F);
+	transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WRITE, 0);
 	return 0;
 }
 
@@ -128,6 +98,7 @@ void dpot_progress(struct mcp45hvx1_config * config)
 			app.values_flags[id] &= ~MYFLAG_SETVAL;
 			int32_t value = app.values[id];
 			if(value >= 0) {
+				transfer(config, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_WRITE, MCP45HVX1_TCON_R0HW | MCP45HVX1_TCON_R0A | MCP45HVX1_TCON_R0W);
 				transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WRITE, value);
 				LOG_INF("Set dpot %s wiper: %i", myid_t_tostr(id), value);
 			} else {

@@ -177,17 +177,24 @@ int main(void)
 
 	LOG_INF("Testing LEDS");
 	test_leds();
-
 	
 	LOG_INF("Setup ADC");
 	egadc_setup_adc(&myadc);
 	
+	LOG_INF("Setup DPOT");
+	dpot_setup(&dpots[0]);
+	dpot_setup(&dpots[1]);
+	dpot_setup(&dpots[2]);
+	dpot_setup(&dpots[3]);
+	dpot_setup(&dpots[4]);
+	dpot_setup(&dpots[5]);
+	dpot_setup(&dpots[6]);
 
 	while(1) {
 		mybt_progress(&app);
 		egadc_progress(&myadc);
-		dpot_progress(&dpots[1]);
 		dpot_progress(&dpots[0]);
+		dpot_progress(&dpots[1]);
 		dpot_progress(&dpots[2]);
 		dpot_progress(&dpots[3]);
 		dpot_progress(&dpots[4]);
