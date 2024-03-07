@@ -379,7 +379,21 @@ void egadc_adc_value_reset(struct mcp356x_config * config)
 	config->num_drdy = 0;
 	config->num_irq = 0;
 	config->raw_max[MCP356X_CH_CH0] = INT32_MIN; // Reset max
+	config->raw_max[MCP356X_CH_CH1] = INT32_MIN; // Reset max
+	config->raw_max[MCP356X_CH_CH2] = INT32_MIN; // Reset max
+	config->raw_max[MCP356X_CH_CH3] = INT32_MIN; // Reset max
+	config->raw_max[MCP356X_CH_CH4] = INT32_MIN; // Reset max
+	config->raw_max[MCP356X_CH_CH5] = INT32_MIN; // Reset max
+	config->raw_max[MCP356X_CH_CH6] = INT32_MIN; // Reset max
+	config->raw_max[MCP356X_CH_CH7] = INT32_MIN; // Reset max
 	config->raw_min[MCP356X_CH_CH0] = INT32_MAX; // Reset min
+	config->raw_min[MCP356X_CH_CH1] = INT32_MAX; // Reset min
+	config->raw_min[MCP356X_CH_CH2] = INT32_MAX; // Reset min
+	config->raw_min[MCP356X_CH_CH3] = INT32_MAX; // Reset min
+	config->raw_min[MCP356X_CH_CH4] = INT32_MAX; // Reset min
+	config->raw_min[MCP356X_CH_CH5] = INT32_MAX; // Reset min
+	config->raw_min[MCP356X_CH_CH6] = INT32_MAX; // Reset min
+	config->raw_min[MCP356X_CH_CH7] = INT32_MAX; // Reset min
 }
 
 
@@ -439,6 +453,22 @@ void egadc_progress(struct mcp356x_config * config)
 		app.values[MYID_ADC_CH5] = MCP356X_raw_to_volt(config->raw_iir[5], TIABT_VREF_MICRO_VOLT, config->gain_reg);
 		app.values[MYID_ADC_CH6] = MCP356X_raw_to_volt(config->raw_iir[6], TIABT_VREF_MICRO_VOLT, config->gain_reg);
 		app.values[MYID_ADC_CH7] = MCP356X_raw_to_volt(config->raw_iir[7], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH0_MIN] = MCP356X_raw_to_volt(config->raw_min[0], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH1_MIN] = MCP356X_raw_to_volt(config->raw_min[1], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH2_MIN] = MCP356X_raw_to_volt(config->raw_min[2], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH3_MIN] = MCP356X_raw_to_volt(config->raw_min[3], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH4_MIN] = MCP356X_raw_to_volt(config->raw_min[4], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH5_MIN] = MCP356X_raw_to_volt(config->raw_min[5], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH6_MIN] = MCP356X_raw_to_volt(config->raw_min[6], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH7_MIN] = MCP356X_raw_to_volt(config->raw_min[7], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH0_MAX] = MCP356X_raw_to_volt(config->raw_max[0], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH1_MAX] = MCP356X_raw_to_volt(config->raw_max[1], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH2_MAX] = MCP356X_raw_to_volt(config->raw_max[2], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH3_MAX] = MCP356X_raw_to_volt(config->raw_max[3], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH4_MAX] = MCP356X_raw_to_volt(config->raw_max[4], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH5_MAX] = MCP356X_raw_to_volt(config->raw_max[5], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH6_MAX] = MCP356X_raw_to_volt(config->raw_max[6], TIABT_VREF_MICRO_VOLT, config->gain_reg);
+		app.values[MYID_ADC_CH7_MAX] = MCP356X_raw_to_volt(config->raw_max[7], TIABT_VREF_MICRO_VOLT, config->gain_reg);
 		int resistor = 1000000;
 		app.values[MYID_CH0_PIKO_A] = app.values[MYID_ADC_CH0] * (1000000 / resistor);
 		app.values[MYID_CH1_PIKO_A] = app.values[MYID_ADC_CH1] * (1000000 / resistor);
@@ -448,6 +478,7 @@ void egadc_progress(struct mcp356x_config * config)
 		app.values[MYID_CH5_PIKO_A] = app.values[MYID_ADC_CH5] * (1000000 / resistor);
 		app.values[MYID_CH6_PIKO_A] = app.values[MYID_ADC_CH6] * (1000000 / resistor);
 		app.values[MYID_CH7_PIKO_A] = app.values[MYID_ADC_CH7] * (1000000 / resistor);
+		egadc_adc_value_reset(config);
 		break;
 
 	default:

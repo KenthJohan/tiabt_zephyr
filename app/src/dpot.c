@@ -99,10 +99,11 @@ void dpot_progress(struct mcp45hvx1_config * config)
 			int32_t value = app.values[id];
 			if(value >= 0) {
 				transfer(config, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_WRITE, MCP45HVX1_TCON_R0HW | MCP45HVX1_TCON_R0A | MCP45HVX1_TCON_R0W);
+				k_sleep(K_MSEC(10));
 				transfer(config, MCP45HVX1_MEM_WIPER | MCP45HVX1_COM_WRITE, value);
 				LOG_INF("Set dpot %s wiper: %i", myid_t_tostr(id), value);
 			} else {
-				transfer(config, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_WRITE, MCP45HVX1_TCON_R0HW);
+				transfer(config, MCP45HVX1_MEM_TCON | MCP45HVX1_COM_WRITE, MCP45HVX1_TCON_R0HW | MCP45HVX1_TCON_R0A);
 			}
 		}
 	} else {

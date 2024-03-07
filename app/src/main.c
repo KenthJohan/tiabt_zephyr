@@ -223,7 +223,9 @@ int main(void)
 		{
 		case APP_PRINT_MODE_ADC_ALL:
 			if(myadc.state == EGADC_STATE_READY) {
-				app_print_adc_all(&app);
+				app_print_adc_min(&app);
+				app_print_adc_max(&app);
+				app_print_adc_val(&app);
 			}
 			break;
 		

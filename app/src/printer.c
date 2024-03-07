@@ -43,9 +43,9 @@ egadc_log_REG_IRQ(&c.bus, MCP356X_REG_IRQ);
 
 
 
-void app_print_adc_all(app_t * a)
+void app_print_adc_val(app_t * a)
 {
-	printk("%-8i %-8i %-8i %-8i %-8i %-8i %-8i %-8i\n", 
+	printk("ADCVAL: %-8i %-8i %-8i %-8i %-8i %-8i %-8i %-8i\n", 
     a->values[MYID_ADC_CH0],
     a->values[MYID_ADC_CH1],
     a->values[MYID_ADC_CH2],
@@ -54,5 +54,33 @@ void app_print_adc_all(app_t * a)
     a->values[MYID_ADC_CH5],
     a->values[MYID_ADC_CH6],
     a->values[MYID_ADC_CH7]
+    );
+}
+
+void app_print_adc_min(app_t * a)
+{
+	printk("ADCMIN: %-8i %-8i %-8i %-8i %-8i %-8i %-8i %-8i\n", 
+    a->values[MYID_ADC_CH0_MIN],
+    a->values[MYID_ADC_CH1_MIN],
+    a->values[MYID_ADC_CH2_MIN],
+    a->values[MYID_ADC_CH3_MIN],
+    a->values[MYID_ADC_CH4_MIN],
+    a->values[MYID_ADC_CH5_MIN],
+    a->values[MYID_ADC_CH6_MIN],
+    a->values[MYID_ADC_CH7_MIN]
+    );
+}
+
+void app_print_adc_max(app_t * a)
+{
+	printk("ADCMAX: %-8i %-8i %-8i %-8i %-8i %-8i %-8i %-8i\n", 
+    a->values[MYID_ADC_CH0_MAX],
+    a->values[MYID_ADC_CH1_MAX],
+    a->values[MYID_ADC_CH2_MAX],
+    a->values[MYID_ADC_CH3_MAX],
+    a->values[MYID_ADC_CH4_MAX],
+    a->values[MYID_ADC_CH5_MAX],
+    a->values[MYID_ADC_CH6_MAX],
+    a->values[MYID_ADC_CH7_MAX]
     );
 }

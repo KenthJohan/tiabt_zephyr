@@ -8,48 +8,65 @@ import matplotlib.ticker as ticker
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--input", type=str, required=True, help="Input file")
+ap.add_argument("-c", "--channel", type=int, required=True, help="Channel")
 args = ap.parse_args()
 
 j = 0
 value = 0
 
-def init():
+
+
+#def init():
     #ax.set_xlim(left=2, right=None)
     #ax.set_ylim(bottom=None, top=7)
     #ax.set_xlim(0, 1000)
     #ax.set_ylim(0, 300000)
     #ln.set_data([], [])
-    return ln,
+    #return lines,
 
-def update(i, f, xdata, ydata, ln):
+def update(i, f, xdata, ydata, lines):
     global j
     global value
     pullData = f.read()
     dataArray = pullData.split('\n')
-    for eachLine in dataArray: # and eachLine.startswith("IRQ:"):
+    for eachLine in dataArray:
         if len(eachLine) < 1:
             continue
         g = eachLine.split()
         if len(g) < 1:
             continue
-        h = g[3]
-        if h.isdigit() == False:
-             continue
-        j += 1
-        #value = (2*value + int(h)) / (2*2)
-        #value = int(h)
-        #print(int(h))
-        xdata.append(j)
-        ydata[0].append(int(h))
+
+        
+        if eachLine.startswith("ADCMIN:"):
+            h = g[args.channel]
+            if h.isdigit() == False:
+                continue
+            ydata[1].append(int(h))
+
+        if eachLine.startswith("ADCMAX:"):
+            h = g[args.channel]
+            if h.isdigit() == False:
+                continue
+            ydata[2].append(int(h))
+
+        if eachLine.startswith("ADCVAL:"):
+            h = g[args.channel]
+            if h.isdigit() == False:
+                continue
+            j += 1
+            xdata.append(j)
+            ydata[0].append(int(h))
     
-    ln.set_data(xdata, ydata[0])
+    lines[0].set_data(xdata, ydata[0])
+    #lines[1].set_data(xdata, ydata[1])
+    #lines[2].set_data(xdata, ydata[2])
 
                 
     #xdata.append(frame)
     #ydata.append(np.sin(frame))
     #ln.set_data(xdata, ydata[0])
-    #p = plt.fill_between(xdata, ydata1, ydata2, facecolor = 'C1', alpha = 0.2)
-    return ln,
+    #p = plt.fill_between(xdata, ydata[1], ydata[2], facecolor = 'C1', alpha = 0.2)
+    return lines
 
 
 
@@ -70,7 +87,14 @@ ax.ticklabel_format(axis='both', style='plain')
 ax.grid(True)
 xdata = []
 ydata = [[],[],[]] # Avg, Min, Max
-ln, = plt.plot([], [], lw=2)
+#ln, = plt.plot([], [], lw=2)
+
+lines = [
+    ax.plot([], [])[0]
+    #ax.plot([], [])[0],
+    #ax.plot([], [])[0]
+]
+
 
 # https://stackoverflow.com/questions/23918120/weird-characters-while-reading-file-content
 f = open(args.input, 'r', encoding='utf-8-sig')
@@ -82,5 +106,6 @@ f = open(args.input, 'r', encoding='utf-8-sig')
 #plt.ylabel('Temperature (deg C)')
 #plt.xlim(left=0)
 
-ani = FuncAnimation(fig, update, init_func=init, blit=True, fargs=(f, xdata, ydata, ln), interval=100)
+#ani = FuncAnimation(fig, update, init_func=init, blit=True, fargs=(f, xdata, ydata, lines), interval=100)
+ani = FuncAnimation(fig, update, blit=True, fargs=(f, xdata, ydata, lines), interval=100)
 plt.show()
